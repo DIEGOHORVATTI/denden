@@ -1,0 +1,20 @@
+[Desktop Entry]
+Type=Application
+Name=Den Den
+GenericName=Gravador de tela com câmera
+Comment=Câmera redonda flutuante e gravador de tela
+Exec=denden
+Icon=denden
+Terminal=false
+Categories=AudioVideo;Video;Recorder;
+Keywords=denden;mushi;gravar;tela;câmera;webcam;screen;recorder;obs;
+StartupNotify=false
+Actions=gravar;camera;
+
+[Desktop Action gravar]
+Name=Gravar / parar
+Exec=denden --gravar
+
+[Desktop Action camera]
+Name=Mostrar / esconder câmera
+Exec=denden --camera

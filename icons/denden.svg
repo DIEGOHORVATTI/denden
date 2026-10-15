@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2a2f5b"/>
+      <stop offset="1" stop-color="#11132b"/>
+    </linearGradient>
+    <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffe08a"/>
+      <stop offset="1" stop-color="#f2b33d"/>
+    </linearGradient>
+    <linearGradient id="shell" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5eead4"/>
+      <stop offset=".5" stop-color="#38bdf8"/>
+      <stop offset="1" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <radialGradient id="gloss" cx=".35" cy=".25" r=".65">
+      <stop offset="0" stop-color="#fff" stop-opacity=".5"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#000" flood-opacity=".45"/>
+    </filter>
+  </defs>
+
+  <!-- fundo -->
+  <rect x="8" y="8" width="240" height="240" rx="56" fill="url(#bg)"/>
+  <rect x="8.5" y="8.5" width="239" height="239" rx="55.5" fill="none" stroke="#fff" stroke-opacity=".08"/>
+
+  <g filter="url(#shadow)">
+    <!-- antenas com olhos -->
+    <path d="M176 120 L162 66 M200 120 L214 66" stroke="#f2b33d" stroke-width="11" stroke-linecap="round"/>
+    <circle cx="161" cy="60" r="15" fill="#fff"/>
+    <circle cx="215" cy="60" r="15" fill="#fff"/>
+    <circle cx="165" cy="62" r="7" fill="#11132b"/>
+    <circle cx="219" cy="62" r="7" fill="#11132b"/>
+    <circle cx="167" cy="59" r="2.2" fill="#fff"/>
+    <circle cx="221" cy="59" r="2.2" fill="#fff"/>
+
+    <!-- corpo + cabeça -->
+    <path d="M30 206 Q30 186 56 184 L140 178 Q142 110 188 108 Q226 106 226 152 L226 188 Q226 214 196 214 L50 214 Q30 214 30 206 Z" fill="url(#body)"/>
+    <!-- boca de Den Den Mushi -->
+    <path d="M178 156 Q194 172 212 156 Q206 166 195 167 Q184 166 178 156 Z" fill="#b8551f"/>
+    <path d="M176 154 Q195 150 214 154" stroke="#e8952e" stroke-width="5" stroke-linecap="round" fill="none"/>
+
+    <!-- concha = bolha da câmera -->
+    <circle cx="96" cy="134" r="66" fill="url(#shell)"/>
+    <path d="M96 134 m0 -8 a8 8 0 1 1 -8 8 a16 16 0 0 1 16 -16 a24 24 0 0 1 24 24 a32 32 0 0 1 -32 32 a40 40 0 0 1 -40 -40 a48 48 0 0 1 48 -48"
+          fill="none" stroke="#fff" stroke-opacity=".75" stroke-width="8" stroke-linecap="round"/>
+    <circle cx="96" cy="134" r="66" fill="url(#gloss)"/>
+  </g>
+
+  <!-- REC -->
+  <circle cx="52" cy="52" r="13" fill="#ef4444"/>
+  <circle cx="52" cy="52" r="20" fill="none" stroke="#ef4444" stroke-opacity=".35" stroke-width="4"/>
+</svg>
