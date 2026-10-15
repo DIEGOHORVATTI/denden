@@ -1,0 +1,56 @@
+name: denden
+title: Den Den
+base: core24
+version: '1.0.0'
+summary: Câmera redonda flutuante e gravador de tela para X11
+description: |
+  Den Den deixa a sua webcam numa bolha redonda por cima de tudo e grava a tela
+  com áudio do PC e do microfone. Arraste a bolha com o mouse, mude o tamanho
+  na rodinha e controle tudo pelo ícone na bandeja do sistema.
+
+  Feito para X11 (i3 e afins). Em Wayland a captura de tela não funciona.
+license: MIT
+icon: icons/denden.svg
+contact: https://github.com/DIEGOHORVATTI/denden/issues
+issues: https://github.com/DIEGOHORVATTI/denden/issues
+source-code: https://github.com/DIEGOHORVATTI/denden
+website: https://github.com/DIEGOHORVATTI/denden
+grade: stable
+confinement: strict
+
+platforms:
+  amd64:
+
+slots:
+  denden-dbus:  # Gtk.Application usa o nome no D-Bus para manter instância única e receber --gravar/--camera
+    interface: dbus
+    bus: session
+    name: dev.horvatti.DenDen
+
+apps:
+  denden:
+    command: usr/bin/denden
+    desktop: usr/share/applications/denden.desktop
+    extensions: [gnome]
+    plugs:
+      - x11
+      - camera
+      - audio-playback
+      - audio-record
+      - home
+      - opengl
+    slots:
+      - denden-dbus
+
+parts:
+  denden:
+    plugin: make
+    source: .
+    make-parameters: [PREFIX=/usr]
+    stage-packages:
+      - python3
+      - python3-gi
+      - python3-gi-cairo
+      - python3-cairo
+      - ffmpeg
+      - libnotify-bin

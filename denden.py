@@ -16,6 +16,7 @@ import sys
 import threading
 import time
 import warnings
+from functools import cache
 from pathlib import Path
 
 import cairo
@@ -52,7 +53,10 @@ def circle_region(size):
 
 
 def videos_dir():
-    d = GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_VIDEOS) or str(Path.home() / "Videos")
+    if real := os.environ.get("SNAP_REAL_HOME"):
+        d = Path(real) / "Videos"  # ponytail: no snap o $HOME é remapeado e ~/.config/user-dirs.dirs é inacessível
+    else:
+        d = GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_VIDEOS) or str(Path.home() / "Videos")
     Path(d).mkdir(parents=True, exist_ok=True)
     return Path(d)
 
@@ -67,6 +71,20 @@ def work_area():
         mon = Gdk.Display.get_default().get_primary_monitor() or Gdk.Display.get_default().get_monitor(0)
         g = mon.get_geometry()
         return g.x, g.y, g.width, g.height
+
+
+@cache
+def vaapi_ok():
+    """Testa o encoder de verdade: o device pode existir sem driver (ex.: dentro do snap)."""
+    if not os.path.exists(VAAPI):
+        return False
+    test = ["ffmpeg", "-v", "error", "-vaapi_device", VAAPI, "-f", "lavfi", "-i", "nullsrc=s=64x64",
+            "-frames:v", "1", "-vf", "format=nv12,hwupload", "-c:v", "h264_vaapi", "-f", "null", "-"]
+    return subprocess.run(test, capture_output=True, env=ffmpeg_env(), timeout=10).returncode == 0
+
+
+def ffmpeg_env():
+    return {**os.environ, "LIBVA_DRIVER_NAME": os.environ.get("LIBVA_DRIVER_NAME", "i965")}
 
 
 def notify(msg):
@@ -129,16 +147,15 @@ class Recorder:
         elif srcs:
             audio += ["-map", "0:v", "-map", "1:a"]
         audio_enc = ["-c:a", "aac", "-b:a", "160k"] if srcs else []
-        if os.path.exists(VAAPI):
+        if vaapi_ok():
             pre = ["-vaapi_device", VAAPI]
             enc = ["-vf", "format=nv12,hwupload", "-c:v", "h264_vaapi", "-qp", "24"]
-        else:  # ponytail: x264 em CPU esquenta; só cai aqui sem GPU Intel/AMD
+        else:  # ponytail: x264 em CPU esquenta; só cai aqui sem VAAPI funcionando
             pre = []
             enc = ["-c:v", "libx264", "-preset", "ultrafast", "-crf", "23", "-pix_fmt", "yuv420p"]
         cmd = ["ffmpeg", "-loglevel", "error", "-y", *pre, *grab, *audio, *enc, *audio_enc,
                "-movflags", "+faststart", str(self.path)]
-        env = {**os.environ, "LIBVA_DRIVER_NAME": os.environ.get("LIBVA_DRIVER_NAME", "i965")}
-        self.proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, env=env)
+        self.proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, env=ffmpeg_env())
         self.started = time.monotonic()
 
     def stop(self):
@@ -356,7 +373,10 @@ class App(Gtk.Application):
 def remote(action):
     """Manda a ação para o Den Den já aberto, sem abrir outra."""
     cli = Gio.Application(application_id=APP_ID)
-    cli.register(None)
+    try:
+        cli.register(None)
+    except GLib.Error:  # instância fechando no meio da chamada
+        sys.exit("Den Den não respondeu")
     if not cli.get_is_remote():
         sys.exit("Den Den não está aberto")
     cli.activate_action(action, None)

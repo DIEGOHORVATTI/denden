@@ -2,7 +2,9 @@ VERSION = 1.0.0
 PREFIX ?= $(HOME)/.local
 SHARE = $(DESTDIR)$(PREFIX)/share
 
-.PHONY: install uninstall deb test
+.PHONY: all install uninstall deb test
+
+all:  # nada a compilar; o plugin make do snapcraft chama o alvo padrão
 
 test:
 	python3 denden.py --selftest
