@@ -41,3 +41,5 @@ bindsym $mod+c exec --no-startup-id denden --camera
 
 Os vídeos vão para a pasta de vídeos do usuário (`xdg-user-dir VIDEOS`).
 `DENDEN_CAM=/dev/video1` troca a câmera.
+
+<img width="2880" height="1800" alt="image" src="https://github.com/user-attachments/assets/ae6d6d63-3cda-4f1e-a281-49eda9692c76" />
