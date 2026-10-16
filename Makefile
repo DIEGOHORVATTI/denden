@@ -15,7 +15,8 @@ install:
 	install -Dm644 icons/denden-rec.svg $(SHARE)/denden/icons/denden-rec.svg
 	install -Dm644 icons/denden-tray.svg $(SHARE)/denden/icons/denden-tray.svg
 	install -Dm644 icons/denden.svg $(SHARE)/icons/hicolor/scalable/apps/denden.svg
-	install -Dm644 denden.desktop $(SHARE)/applications/denden.desktop
+	# caminho absoluto: o i3/rofi nem sempre têm ~/.local/bin no PATH
+	sed 's|^Exec=denden|Exec=$(PREFIX)/bin/denden|' denden.desktop | install -Dm644 /dev/stdin $(SHARE)/applications/denden.desktop
 	install -d $(DESTDIR)$(PREFIX)/bin
 	ln -sf ../share/denden/denden.py $(DESTDIR)$(PREFIX)/bin/denden
 	-[ -z "$(DESTDIR)" ] && gtk-update-icon-cache -qtf $(SHARE)/icons/hicolor 2>/dev/null; true
