@@ -4,28 +4,25 @@ SHARE = $(DESTDIR)$(PREFIX)/share
 
 .PHONY: all install uninstall deb test
 
-all:  # nada a compilar; o plugin make do snapcraft chama o alvo padrão
+all:
 
 test:
-	python3 denden.py --selftest
+	python3 main.py --selftest
 
 install:
-	install -Dm755 denden.py $(SHARE)/denden/denden.py
-	install -Dm644 icons/denden.svg $(SHARE)/denden/icons/denden.svg
-	install -Dm644 icons/denden-rec.svg $(SHARE)/denden/icons/denden-rec.svg
-	install -Dm644 icons/denden-tray.svg $(SHARE)/denden/icons/denden-tray.svg
+	install -Dm755 main.py $(SHARE)/denden/main.py
+	install -Dm644 -t $(SHARE)/denden/denden denden/*.py
+	install -Dm644 -t $(SHARE)/denden/icons icons/*.svg
 	install -Dm644 icons/denden.svg $(SHARE)/icons/hicolor/scalable/apps/denden.svg
-	# caminho absoluto: o i3/rofi nem sempre têm ~/.local/bin no PATH
 	sed 's|^Exec=denden|Exec=$(PREFIX)/bin/denden|' denden.desktop | install -Dm644 /dev/stdin $(SHARE)/applications/denden.desktop
 	install -d $(DESTDIR)$(PREFIX)/bin
-	ln -sf ../share/denden/denden.py $(DESTDIR)$(PREFIX)/bin/denden
+	ln -sf ../share/denden/main.py $(DESTDIR)$(PREFIX)/bin/denden
 	-[ -z "$(DESTDIR)" ] && gtk-update-icon-cache -qtf $(SHARE)/icons/hicolor 2>/dev/null; true
 
 uninstall:
 	rm -rf $(SHARE)/denden $(DESTDIR)$(PREFIX)/bin/denden \
 		$(SHARE)/icons/hicolor/scalable/apps/denden.svg $(SHARE)/applications/denden.desktop
 
-# sudo apt install ./denden_$(VERSION)_all.deb
 deb:
 	rm -rf build && $(MAKE) install PREFIX=/usr DESTDIR=build/pkg
 	install -d build/pkg/DEBIAN
